@@ -34,7 +34,6 @@ private:
 
 	float inputFloat3[3] = {0, 0, 0};
 
-	PlayerBullet* bullet_ = nullptr;
-
 	std::list<PlayerBullet*> bullets_;
+	int count = 0;
 };
