@@ -6,6 +6,7 @@
 #include <cassert>
 #include "ImGuiManager.h"
 #include "PlayerBullet.h"
+#include <list>
 
 class Player {
 
@@ -17,6 +18,8 @@ public:
 	void Draw(ViewProjection viewProjection_);
 
 	void Attack();
+
+	~Player();
 
 private:
 
@@ -32,4 +35,6 @@ private:
 	float inputFloat3[3] = {0, 0, 0};
 
 	PlayerBullet* bullet_ = nullptr;
+
+	std::list<PlayerBullet*> bullets_;
 };

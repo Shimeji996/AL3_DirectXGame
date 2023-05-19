@@ -1,12 +1,19 @@
 ﻿#include "Player.h"
 #include "MatrixMath.h"
 
+Player::~Player() {
+	for (PlayerBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
 void Player::Attack() {
 	if (input_->PushKey(DIK_RETURN)) {
 		PlayerBullet* newBulllet = new PlayerBullet();
 		newBulllet->Initialize(model_, worldTransform_.translation_);
 		
 		bullet_ = newBulllet;
+		bullets_.push_back(newBulllet);
 	}
 }
 
@@ -79,6 +86,9 @@ void Player::Update() {
 		bullet_->Update();
 	}
 
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Update();
+	}
 }
 
 void Player::Draw(ViewProjection viewProjection){
@@ -87,6 +97,10 @@ void Player::Draw(ViewProjection viewProjection){
 
 	if (bullet_) {
 		bullet_->Draw(viewProjection);
+	}
+
+	for (PlayerBullet* bullet : bullets_) {
+		bullet->Draw(viewProjection);
 	}
 }
 
