@@ -1,7 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Model.h"
+#include "Input.h"
+#include <cassert>
+#include "ImGuiManager.h"
 
 class Player {
 
@@ -10,7 +13,7 @@ public:
 
 	void Update();
 
-	void Draw(ViewProjection viewProjection);
+	void Draw(ViewProjection viewProjection_);
 
 private:
 
@@ -19,4 +22,9 @@ private:
 	Model* model_ = nullptr;
 
 	uint32_t textureHandle_ = 0u;
+
+	// キーボード入力
+	Input* input_ = nullptr;
+
+	float inputFloat3[3] = {0, 0, 0};
 };

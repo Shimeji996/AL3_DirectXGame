@@ -1,4 +1,6 @@
 #pragma once
+#include<Vector3.h>
+
 /// <summary>
 /// 4x4行列
 /// </summary>
