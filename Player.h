@@ -5,6 +5,7 @@
 #include "Input.h"
 #include <cassert>
 #include "ImGuiManager.h"
+#include "PlayerBullet.h"
 
 class Player {
 
@@ -14,6 +15,8 @@ public:
 	void Update();
 
 	void Draw(ViewProjection viewProjection_);
+
+	void Attack();
 
 private:
 
@@ -27,4 +30,6 @@ private:
 	Input* input_ = nullptr;
 
 	float inputFloat3[3] = {0, 0, 0};
+
+	PlayerBullet* bullet_ = nullptr;
 };

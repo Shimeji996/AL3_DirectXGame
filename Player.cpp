@@ -1,6 +1,15 @@
 ﻿#include "Player.h"
 #include "MatrixMath.h"
 
+void Player::Attack() {
+	if (input_->PushKey(DIK_RETURN)) {
+		PlayerBullet* newBulllet = new PlayerBullet();
+		newBulllet->Initialize(model_, worldTransform_.translation_);
+		
+		bullet_ = newBulllet;
+	}
+}
+
 void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	assert(model);
@@ -37,6 +46,14 @@ void Player::Update() {
 		inputFloat3[1] = worldTransform_.translation_.y;
 	}
 
+	const float kRotSpeed = 0.02f;
+
+	if (input_->PushKey(DIK_A)) {
+		worldTransform_.rotation_.y -= kRotSpeed;
+	} else if (input_->PushKey(DIK_D)) {
+		worldTransform_.rotation_.y += kRotSpeed;
+	}
+
 	worldTransform_.translation_.x = inputFloat3[0];
 	worldTransform_.translation_.y = inputFloat3[1];
 
@@ -57,11 +74,19 @@ void Player::Update() {
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
+	Attack();
+	if (bullet_) {
+		bullet_->Update();
+	}
+
 }
 
 void Player::Draw(ViewProjection viewProjection){
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
+	if (bullet_) {
+		bullet_->Draw(viewProjection);
+	}
 }
 
