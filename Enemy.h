@@ -13,4 +13,12 @@ private:
 	WorldTransform worldTransform_;
 	Model* model_;
 	uint32_t texturehandle_;
+
+	enum class Phase {
+		Approach, // Ú‹ß‚·‚é
+		Leave, // —£’E‚·‚é
+	};
+
+	Phase phase_ = Phase::Approach;
+
 };

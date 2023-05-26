@@ -15,6 +15,16 @@ void Enemy::Update() {
 	move.z -= kCharacterSpeed;
 	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
 	worldTransform_.UpdateMatrix();
+
+	switch (phase_) {
+	case Enemy::Phase::Approach:
+		// 移動（ベクトルを加算）
+		worldTransform_.translation_ ;
+
+
+
+		break;
+	}
 }
 
 void Enemy::Draw(const ViewProjection& view) {
