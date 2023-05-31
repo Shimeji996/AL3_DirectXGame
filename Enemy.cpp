@@ -1,5 +1,38 @@
-#include "Enemy.h"
+﻿#include "Enemy.h"
 #include <assert.h>
+
+Enemy::~Enemy() {
+
+	delete state;
+	for (EnemyBullet* bullet : bullets_) {
+		delete bullet;
+	}
+}
+
+void Enemy::Attack() {
+
+	timer++;
+
+	if (count == 0) {
+		if (timer >= 0) {
+			// 弾の速度
+			const float kBulletSpeed = -1.0f;
+			Vector3 velocity(0, 0, kBulletSpeed);
+			velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+
+			EnemyBullet* newBullet = new EnemyBullet();
+			newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+			// 弾を登録
+			// bullet_ = newBullet;
+			bullets_.push_back(newBullet);
+			count++;
+		}
+	} else if (timer >= 60) {
+		count = 0;
+		timer = 0;
+	}
+}
+
 void Enemy::Initialize(Model* model, const Vector3& position) {
 	assert(model);
 	model_ = model;
@@ -37,12 +70,32 @@ void EnemyStateLeave::Update() {
 
 void Enemy::Update() {
 	
+	// デスフラグの立った球を削除
+	bullets_.remove_if([](EnemyBullet* bullet) {
+		if (bullet->IsDead()) {
+			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
 	state->Update();
 
+	Attack();
+
 	worldTransform_.UpdateMatrix();
+
+	// 弾更新
+	for (EnemyBullet* bullet : bullets_) {
+		bullet->Update();
+	}
 
 }
 
 void Enemy::Draw(const ViewProjection& view) {
 	model_->Draw(worldTransform_, view, texturehandle_);
+	// 弾の描画 
+	for (EnemyBullet* bullet : bullets_) {
+		bullet->Draw(view); 
+	}
 }
