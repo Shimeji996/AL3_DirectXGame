@@ -8,6 +8,36 @@ void Enemy::Initialize(Model* model, const Vector3& position) {
 	worldTransform_.translation_ = position;
 }
 
+void Enemy::ApproachMove() {
+
+	Vector3 move = {0, 0, 0};
+	const float kCharacterSpeed = 0.2f;
+
+	move.z -= kCharacterSpeed;
+	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+	worldTransform_.UpdateMatrix();
+
+	if (worldTransform_.translation_.z < 0.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
+void Enemy::LeaveMove() {
+
+	Vector3 move = {0, 0, 0};
+	const float kCharacterSpeed = 0.2f;
+
+	move.x += kCharacterSpeed;
+	move.y += kCharacterSpeed;
+	move.z += kCharacterSpeed;
+	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+	worldTransform_.UpdateMatrix();
+
+	if (worldTransform_.translation_.z > 30.0f) {
+		phase_ = Phase::Leave;
+	}
+}
+
 void Enemy::Update() {
 	Vector3 move = {0, 0, 0};
 	const float kCharacterSpeed = 0.2f;
@@ -17,11 +47,15 @@ void Enemy::Update() {
 	worldTransform_.UpdateMatrix();
 
 	switch (phase_) {
-	case Enemy::Phase::Approach:
-		// 移動（ベクトルを加算）
-		worldTransform_.translation_ ;
+	case Phase::Approach:
+		
+		Enemy::ApproachMove();
 
+		break;
 
+	case Phase::Leave:
+
+		Enemy::LeaveMove();
 
 		break;
 	}

@@ -1,5 +1,11 @@
+ï»¿#pragma once
 #include "MatrixMath.h"
 #include "Model.h"
+
+enum class Phase {
+	Approach, // æ¥è¿‘ã™ã‚‹
+	Leave,    // é›¢è„±ã™ã‚‹
+};
 
 class Enemy {
 public:
@@ -9,15 +15,15 @@ public:
 
 	void Draw(const ViewProjection& view);
 
+	void ApproachMove();
+
+	void LeaveMove();
+
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_;
 	uint32_t texturehandle_;
-
-	enum class Phase {
-		Approach, // Ú‹ß‚·‚é
-		Leave, // —£’E‚·‚é
-	};
 
 	Phase phase_ = Phase::Approach;
 

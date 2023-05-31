@@ -13,6 +13,15 @@ inline Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	return result;
 }
 
+inline Vector3 Subtract(const Vector3& v1, const Vector3& v2) {
+	Vector3 result{};
+
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	return result;
+}
+
 inline Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 	Matrix4x4 result;
 	result.m[0][0] = 1.0f;
