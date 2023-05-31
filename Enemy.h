@@ -27,4 +27,8 @@ private:
 
 	Phase phase_ = Phase::Approach;
 
+	static void (Enemy::*spFuncTable[])();
+
+	void (Enemy::*pApproachMove)();
+
 };

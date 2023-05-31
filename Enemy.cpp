@@ -38,27 +38,13 @@ void Enemy::LeaveMove() {
 	}
 }
 
-void Enemy::Update() {
-	Vector3 move = {0, 0, 0};
-	const float kCharacterSpeed = 0.2f;
+void (Enemy::*Enemy::spFuncTable[])(){&Enemy::ApproachMove, &Enemy::LeaveMove};
 
-	move.z -= kCharacterSpeed;
-	worldTransform_.translation_ = Add(worldTransform_.translation_, move);
+void Enemy::Update() {
+	
+	(this->*spFuncTable[static_cast<size_t>(phase_)])();
 	worldTransform_.UpdateMatrix();
 
-	switch (phase_) {
-	case Phase::Approach:
-		
-		Enemy::ApproachMove();
-
-		break;
-
-	case Phase::Leave:
-
-		Enemy::LeaveMove();
-
-		break;
-	}
 }
 
 void Enemy::Draw(const ViewProjection& view) {
