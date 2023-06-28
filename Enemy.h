@@ -5,6 +5,7 @@
 #include "Model.h"
 #include <list>
 #include "EnemyBullet.h"
+#include "TimedCall.h"
 
 enum class Phase {
 	Approach, // 接近する
@@ -54,6 +55,10 @@ public:
 
 	void Attack();
 
+	void Fire();
+
+	void FireAndReset();
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_;
@@ -66,7 +71,9 @@ private:
 	// 弾
 	std::list<EnemyBullet*> bullets_;
 
-	int count = 0;
+	std::list<TimedCall*> timedCall_;
+
+	static const int kShotInterval = 60;
 
 	int timer = 0;
 };
