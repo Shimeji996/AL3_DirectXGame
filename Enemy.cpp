@@ -21,7 +21,7 @@ void Enemy::Fire() {
 }
 
 void Enemy::Attack() {
-
+	
 	timer--;
 
 	if (timer < 0) {
