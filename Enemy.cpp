@@ -21,35 +21,56 @@ void Enemy::Fire() {
 }
 
 void Enemy::Attack() {
-	
+	assert(player_);
 	timer--;
 
 	if (timer < 0) {
 		// 弾の速度
-		const float kBulletSpeed = -1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
-		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
+		const float kBulletSpeed = 1.0f;
+
+		Vector3 plaPos = player_->GetWorldPosition();
+		Vector3 enePos = GetWorldPosition();
+		Vector3 speed;
+		speed.x = plaPos.x - enePos.x;
+		speed.y = plaPos.y - enePos.y;
+		speed.z = plaPos.z - enePos.z;
+		speed = Math::Normalize(speed);
+		speed.x *= kBulletSpeed;
+		speed.y *= kBulletSpeed;
+		speed.z *= kBulletSpeed;
+
+		speed = Math::TransformNormal(speed, worldTransform_.matWorld_);
 
 		EnemyBullet* newBullet = new EnemyBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(model_, worldTransform_.translation_, speed);
 		// 弾を登録
 		// bullet_ = newBullet;
 		bullets_.push_back(newBullet);
 
 		timer = kShotInterval;
 	}
-
 }
 
 void Enemy::Initialize(Model* model, const Vector3& position) {
+
 	assert(model);
 	model_ = model;
-	texturehandle_ = TextureManager::Load("tex1.png");
+	texturehandle_ = TextureManager::Load("white1x1.png");
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
 
 	state = new EnemyStateApproah();
 	state->SetEnemy(this);
+}
+
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos;
+
+	worldPos.x = worldTransform_.translation_.x;
+	worldPos.y = worldTransform_.translation_.y;
+	worldPos.z = worldTransform_.translation_.z;
+
+	return worldPos;
 }
 
 void Enemy::ChangeState(EnemyState* newEnemyState) {
@@ -60,11 +81,10 @@ void Enemy::ChangeState(EnemyState* newEnemyState) {
 }
 
 void Enemy::SetPosition(Vector3 speed) {
-	worldTransform_.translation_ = Add(worldTransform_.translation_, speed);
+	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, speed);
 }
 
 void EnemyStateApproah::Update() {
-	
 	Vector3 appSpeed(0, 0, -0.2f);
 	enemy_->SetPosition(appSpeed);
 
@@ -73,20 +93,17 @@ void EnemyStateApproah::Update() {
 	if (enemy_->GetWT().translation_.z < 0.0f) {
 		enemy_->ChangeState(new EnemyStateLeave);
 	}
-
 }
 
 void EnemyStateLeave::Update() {
-
 	Vector3 leaveSpeed(-0.2f, 0.2f, 0.2f);
 	enemy_->SetPosition(leaveSpeed);
 
 	enemy_->Fire();
-
 }
 
 void Enemy::Update() {
-	
+
 	// デスフラグの立った球を削除
 	bullets_.remove_if([](EnemyBullet* bullet) {
 		if (bullet->IsDead()) {
@@ -97,6 +114,8 @@ void Enemy::Update() {
 	});
 
 	state->Update();
+
+	// Attack();
 
 	timedCall_.remove_if([](TimedCall* timedCall) {
 		if (timedCall->IsFinished()) {
@@ -116,13 +135,14 @@ void Enemy::Update() {
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Update();
 	}
-
 }
 
 void Enemy::Draw(const ViewProjection& view) {
+
 	model_->Draw(worldTransform_, view, texturehandle_);
-	// 弾の描画 
+
+	// 弾の描画
 	for (EnemyBullet* bullet : bullets_) {
-		bullet->Draw(view); 
+		bullet->Draw(view);
 	}
 }

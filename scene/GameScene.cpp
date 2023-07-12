@@ -17,7 +17,7 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
-	textureHandle_ = TextureManager::Load("./Resources/sample.png");
+	textureHandle_ = TextureManager::Load("sample.png");
 	model_ = Model::Create();
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
@@ -26,6 +26,7 @@ void GameScene::Initialize() {
 
 	// 敵の生成
 	enemy_ = new Enemy;
+	enemy_->SetPlayer(player_);
 	Vector3 position = {0, 0, 30};
 	// 敵の初期化
 	enemy_->Initialize(model_, position);

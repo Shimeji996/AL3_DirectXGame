@@ -6,11 +6,14 @@
 #include <list>
 #include "EnemyBullet.h"
 #include "TimedCall.h"
+#include "Player.h"
 
 enum class Phase {
 	Approach, // 接近する
 	Leave,    // 離脱する
 };
+
+class Player;
 
 class Enemy;
 
@@ -53,11 +56,14 @@ public:
 
 	void SetPosition(Vector3 speed);
 
+	// 攻撃
 	void Attack();
 
 	void Fire();
 
-	void FireAndReset();
+	void SetPlayer(Player* player) { player_ = player; }
+
+	Vector3 GetWorldPosition();
 
 private:
 	WorldTransform worldTransform_;
@@ -65,6 +71,8 @@ private:
 	uint32_t texturehandle_;
 
 	Phase phase_ = Phase::Approach;
+
+	Player* player_ = nullptr;
 
 	EnemyState* state;
 

@@ -15,20 +15,18 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	worldTransform_.translation_ = position;
 	// 引数で受け取った速度をメンバに代入
 	velocity_ = velocity;
-
 }
 
 void EnemyBullet::Update() {
 
 	worldTransform_.UpdateMatrix();
 	// 座標を移動
-	worldTransform_.translation_ = Add(worldTransform_.translation_, velocity_);
+	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, velocity_);
 
 	// 時間経過でデス
 	if (--deathtimer_ <= 0) {
 		isDead_ = true;
 	}
-
 }
 
 void EnemyBullet::Draw(const ViewProjection& view) {
