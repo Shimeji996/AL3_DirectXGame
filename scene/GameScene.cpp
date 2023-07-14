@@ -38,6 +38,10 @@ void GameScene::Initialize() {
 
 void GameScene::Update() { 
 
+	// 自キャラの更新
+
+	CheckAllCollisions();
+
 	player_->Update();
 	enemy_->Update();
 
@@ -111,5 +115,71 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
+#pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	// 判定対象AとBの座標
+	Vector3 posA, posB;
+
+	// 自弾リストの取得
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	// 敵弾リストの取得
+	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
+
+#pragma region 自キャラと敵弾
+	posA = player_->GetWorldPosition();
+
+	for (EnemyBullet* bullet : enemyBullets) {
+		posB = bullet->GetWorldPosition();
+
+		float judge = (posB.x - posA.x) * (posB.x - posA.x) +
+		              (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z);
+
+		float playerRad = 2.5f;
+		float enemyRad = 2.5f;
+		if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵キャラ
+
+	for (PlayerBullet* playerBullet : playerBullets) {
+		posB = playerBullet->GetWorldPosition();
+		for (EnemyBullet* enemyBullet : enemyBullets) {
+			posA = enemyBullet->GetWorldPosition();
+
+			float judge = (posB.x - posA.x) * (posB.x - posA.x) +
+			              (posB.y - posA.y) * (posB.y - posA.y) +
+			              (posB.z - posA.z) * (posB.z - posA.z);
+
+			float playerRad = 2.5f;
+			float enemyRad = 2.5f;
+			if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
+				playerBullet->OnCollision();
+				enemyBullet->OnCollision();
+			}
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵キャラ
+	posB = enemy_->GetWorldPosition();
+	for (PlayerBullet* bullet : playerBullets) {
+		posA = bullet->GetWorldPosition();
+
+		float judge = (posB.x - posA.x) * (posB.x - posA.x) +
+		              (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z);
+
+		float playerRad = 2.5f;
+		float enemyRad = 2.5f;
+		if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
+			player_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
 #pragma endregion
 }

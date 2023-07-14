@@ -12,6 +12,12 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
+	Vector3 GetWorldPosition();
+
+	// 衝突を検証したら呼び出される関数
+	void OnCollision();
+
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_;
