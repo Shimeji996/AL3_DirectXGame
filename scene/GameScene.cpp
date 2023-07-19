@@ -40,10 +40,10 @@ void GameScene::Update() {
 
 	// 自キャラの更新
 
-	CheckAllCollisions();
-
 	player_->Update();
 	enemy_->Update();
+
+	CheckAllCollisions();
 
 #ifdef _DEBUG
 
