@@ -11,6 +11,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete enemy_;
 	delete skydome_;
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
@@ -41,6 +42,12 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("treedome", true);
 
 	skydome_->Initialize(modelSkydome_, {0, 0, 0});
+
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize({0, 0, -100.0f}, player_->GetWorldMatrix().rotation_);
+
+	player_->SetParent(&railCamera_->GetWorldTransform());
+
 }
 
 void GameScene::Update() { 
@@ -69,7 +76,10 @@ void GameScene::Update() {
 		viewProjection_.TransferMatrix();
 	} else {
 		// ビュープロジェクション行列の更新と転送
-		viewProjection_.UpdateMatrix();
+		railCamera_->Updata();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 
 #endif

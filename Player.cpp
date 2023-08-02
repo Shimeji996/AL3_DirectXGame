@@ -37,6 +37,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle) {
 
 	worldTransform_.Initialize();
 
+	worldTransform_.translation_.z = 50.0f;
+
 	input_ = Input::GetInstance();
 };
 
@@ -45,9 +47,9 @@ void Player::OnCollision() {}
 Vector3 Player::GetWorldPosition() {
 	Vector3 worldPos;
 
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.x = worldTransform_.matWorld_.m[3][1];
+	worldPos.x = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }
@@ -125,9 +127,7 @@ void Player::Update() {
 	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	Attack();
-	/* if (bullet_) {
-	    bullet_->Update();
-	}*/
+	worldTransform_.UpdateMatrix();
 
 	// 弾更新
 	for (PlayerBullet* bullet : bullets_) {
@@ -138,13 +138,11 @@ void Player::Update() {
 void Player::Draw(ViewProjection viewProjection) {
 
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	// 弾描画
-	/* if (bullet_) {
-	    bullet_->Draw(viewProjection);
-	}*/
-
+	
 	// 弾の描画
 	for (PlayerBullet* bullet : bullets_) {
 		bullet->Draw(viewProjection);
 	}
 };
+
+void Player::SetParent(const WorldTransform* parent) { worldTransform_.parent_ = parent; }
