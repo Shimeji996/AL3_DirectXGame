@@ -51,7 +51,7 @@ void Enemy::Attack() {
 	}
 }
 
-void Enemy::Initialize(Model* model, const Vector3& position) {
+void Enemy::Initialize(Model* model, const Vector3& position, GameScene* gameScene) {
 
 	assert(model);
 	model_ = model;
@@ -61,6 +61,7 @@ void Enemy::Initialize(Model* model, const Vector3& position) {
 
 	state = new EnemyStateApproah();
 	state->SetEnemy(this);
+	SetGameScene(gameScene);
 }
 
 Vector3 Enemy::GetWorldPosition() {
