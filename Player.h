@@ -41,6 +41,8 @@ public:
 
 	void DrawUI();
 
+	void MouseUpdate(ViewProjection& view);
+
 	// デストラクタ
 	~Player();
 
@@ -55,12 +57,14 @@ private:
 	Input* input_ = nullptr;
 	// ImGuiで値を入力する
 	float inputFloat3[3] = {0, 0, 0};
-	// 弾
-	// PlayerBullet* bullet_ = nullptr;
-	// 弾
+
 	std::list<PlayerBullet*> bullets_;
 
 	int count = 0;
+
+	bool isControl = false;
+
+	bool isAttack = false;
 
 	WorldTransform worldTransform3DReticle_;
 
