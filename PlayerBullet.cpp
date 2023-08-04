@@ -20,9 +20,9 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 Vector3 PlayerBullet::GetWorldPosition() {
 	Vector3 worldPos;
 
-	worldPos.x = worldTransform_.translation_.x;
-	worldPos.y = worldTransform_.translation_.y;
-	worldPos.z = worldTransform_.translation_.z;
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
 
 	return worldPos;
 }
@@ -30,9 +30,11 @@ Vector3 PlayerBullet::GetWorldPosition() {
 void PlayerBullet::OnCollision() { isDead_ = true; }
 
 void PlayerBullet::Update() {
+	
+	worldTransform_.translation_.x = worldTransform_.translation_.x + velocity_.x;
+	worldTransform_.translation_.y = worldTransform_.translation_.y + velocity_.y;
+	worldTransform_.translation_.z = worldTransform_.translation_.z + velocity_.z;
 	worldTransform_.UpdateMatrix();
-	// 座標を移動
-	worldTransform_.translation_ = Math::Add(worldTransform_.translation_, velocity_);
 
 	// 時間経過でデス
 	if (--deathtimer_ <= 0) {
