@@ -1,41 +1,19 @@
 ﻿#pragma once
 #include "MatrixMath.h"
 #include "Model.h"
-
-enum class Phase {
-	Approach, // 接近する
-	Leave,    // 離脱する
-};
+#include "EnemyState.h"
 
 class Enemy;
+class EnemyState;
 
-class EnemyState {
-
-protected:
-	Enemy* enemy_ = nullptr;
-
-public:
-	virtual void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-	virtual void Update(){};
-};
-
-class EnemyStateApproah : public EnemyState {
-
-public:
-	void Update();
-};
-
-class EnemyStateLeave : public EnemyState {
-
-public:
-	void Update();
+enum class Phase {
+	Approach,
+	Leave,
 };
 
 class Enemy {
 
 public:
-	~Enemy() { delete state; }
-
 	void Initialize(Model* model, const Vector3& position);
 
 	void Update();

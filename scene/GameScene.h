@@ -3,6 +3,7 @@
 #include "Audio.h"
 #include "DebugCamera.h"
 #include "DirectXCommon.h"
+#include "Enemy.h"
 #include "Input.h"
 #include "Model.h"
 #include "Player.h"
@@ -10,7 +11,6 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "Enemy.h"
 
 /// <summary>
 /// ゲームシーン
@@ -47,11 +47,20 @@ private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
+
+	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
+
+	// 3Dモデルデータ
 	Model* model_ = nullptr;
+
 	WorldTransform worldTransform_;
+	// ビュープロジェクション
 	ViewProjection viewProjection_;
+
+	// 自キャラ
 	Player* player_ = nullptr;
+
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
 	Enemy* enemy_ = nullptr;

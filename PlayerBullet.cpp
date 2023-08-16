@@ -3,31 +3,31 @@
 #include "MatrixMath.h"
 
 void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
-	
+
 	assert(model);
 	model_ = model;
 	// テクスチャ読み込み
-	texturehandle_ = TextureManager::Load("./Resources/white1x1.png");
+	texturehandle_ = TextureManager::Load("white1x1.png");
 
-	// ワールドトランスフォームの初期化
+	// ワールドトランスフォーム
 	worldTransform_.Initialize();
-	// 引数で受け取った初期座標をセット
+	// 引数で受け取った初期座標
 	worldTransform_.translation_ = position;
-
+	// 引数で受け取った速度をメンバに代入
 	velocity_ = velocity;
 }
 
 void PlayerBullet::Update() {
-	worldTransform_.UpdateMatrix(); 
-	
+	worldTransform_.UpdateMatrix();
+	// 座標を移動
 	worldTransform_.translation_ = Add(worldTransform_.translation_, velocity_);
 
+	// 時間経過でデス
 	if (--deathtimer_ <= 0) {
 		isDead_ = true;
 	}
 }
 
-// モデルの描画
 void PlayerBullet::Draw(const ViewProjection& view) {
 	model_->Draw(worldTransform_, view, texturehandle_);
 }
