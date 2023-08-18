@@ -1,12 +1,12 @@
 #include "GameScene.h"
+#include "AxisIndicator.h"
 #include "TextureManager.h"
 #include <cassert>
-#include "AxisIndicator.h"
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() { 
-	delete model_; 
+GameScene::~GameScene() {
+	delete model_;
 	delete player_;
 	delete debugCamera_;
 	delete enemy_;
@@ -17,39 +17,56 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
+
 	textureHandle_ = TextureManager::Load("sample.png");
 	model_ = Model::Create();
+
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
-	player_ = new Player();
-	player_->Initialize(model_,textureHandle_);
 
-	// 敵の生成
-	enemy_ = new Enemy;
-	enemy_->SetPlayer(player_);
-	Vector3 position = {0, 0, 30};
-	// 敵の初期化
-	enemy_->Initialize(model_, position);
-
+	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
+
+	input_ = Input::GetInstance();
+
+	// 軸方向表示の表示を有効化
 	AxisIndicator::GetInstance()->SetVisible(true);
+	// 参照するビュープロジェクションを指定
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+
+	// 自キャラの生成
+	player_ = new Player();
+	// 自キャラの初期化
+	player_->Initialize(model_, textureHandle_);
+
+	// 敵キャラの生成
+	enemy_ = new Enemy();
+	enemy_->SetPlayer(player_);
+	// 敵キャラの初期化
+	Vector3 position = {0, 0, 20};
+	enemy_->Initialize(model_);
 }
 
-void GameScene::Update() { 
-
+void GameScene::Update() {
+	// 自キャラの更新
 	player_->Update();
+
+	// 敵キャラの更新
 	enemy_->Update();
 
+	debugCamera_->Update();
 #ifdef _DEBUG
-
-	if (input_->TriggerKey(DIK_SPACE) && isDebugCameraActive_ == false) {
-		isDebugCameraActive_ = true;
-	} else if (input_->TriggerKey(DIK_SPACE) && isDebugCameraActive_ == true) {
-		isDebugCameraActive_ = false;
+	if (input_->TriggerKey(DIK_Q)) {
+		if (isDebugCameraActive_ == false) {
+			isDebugCameraActive_ = true;
+		} else {
+			isDebugCameraActive_ = false;
+		}
 	}
+#endif
 	// カメラの処理
-	if (isDebugCameraActive_ == true) {
+	if (isDebugCameraActive_) {
+		// デバッグカメラの更新
 		debugCamera_->Update();
 		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
@@ -59,11 +76,6 @@ void GameScene::Update() {
 		// ビュープロジェクション行列の更新と転送
 		viewProjection_.UpdateMatrix();
 	}
-
-#endif
-
-	debugCamera_->Update();
-
 }
 
 void GameScene::Draw() {
@@ -92,9 +104,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-
-	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
+	player_->Draw(viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

@@ -1,87 +1,61 @@
 ﻿#pragma once
-#include "MatrixMath.h"
-#include "WorldTransform.h"
-#include "ViewProjection.h"
-#include "Model.h"
-#include <list>
+#include "Reckon.h"
 #include "EnemyBullet.h"
+#include "EnemyState.h"
+#include "MatrixMath.h"
+#include "Model.h"
 #include "TimedCall.h"
-#include "Player.h"
-
-enum class Phase {
-	Approach, // 接近する
-	Leave,    // 離脱する
-};
+#include "WorldTransform.h"
 
 class Player;
 
-class Enemy;
-
-class EnemyState {
-
-protected:
-	Enemy* enemy_ = nullptr;
-
-public:
-	virtual void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-	virtual void Update(){};
-};
-
-class EnemyStateApproah : public EnemyState {
-
-public:
-	void Update();
-};
-
-class EnemyStateLeave : public EnemyState {
-
-public:
-	void Update();
-};
+class EnemyState;
 
 class Enemy {
-
 public:
+	Enemy();
+
 	~Enemy();
 
-	void Initialize(Model* model, const Vector3& position);
+	void Initialize(Model* model);
 
 	void Update();
 
-	void Draw(const ViewProjection& view);
+	void Draw(const ViewProjection& viewProjection);
 
-	void ChangeState(EnemyState* newEnemyState);
+	void Move(Vector3 speed);
 
-	WorldTransform GetWT() { return worldTransform_; }
+	void ChangePhase(EnemyState* newState);
 
-	void SetPosition(Vector3 speed);
-
-	// 攻撃
-	void Attack();
+	Vector3 GetTranslation() { return worldTransform_.translation_; };
 
 	void Fire();
+
+	void FireandReset();
 
 	void SetPlayer(Player* player) { player_ = player; }
 
 	Vector3 GetWorldPosition();
 
 private:
-	WorldTransform worldTransform_;
-	Model* model_;
-	uint32_t texturehandle_;
+	// メンバ関数ポインタのテーブル
+	static void (Enemy::*phasetable_[])();
 
-	Phase phase_ = Phase::Approach;
+private:
+	WorldTransform worldTransform_;
+	Model* model_ = nullptr;
+	uint32_t textureHandle_ = 0u;
 
 	Player* player_ = nullptr;
 
-	EnemyState* state;
-
-	// 弾
 	std::list<EnemyBullet*> bullets_;
 
-	std::list<TimedCall*> timedCall_;
+	EnemyState* phase_ = nullptr;
 
-	static const int kShotInterval = 60;
+	std::list<TimedCall*> timedCalls_;
 
-	int timer = 0;
+public:
+	static const int kFireInterval = 60;
+
+	int32_t FireTimer_ = 0;
 };

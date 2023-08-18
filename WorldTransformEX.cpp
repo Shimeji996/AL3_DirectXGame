@@ -1,7 +1,9 @@
-#include "MatrixMath.h"
+﻿#include "MatrixMath.h"
 #include "WorldTransform.h"
 
 void WorldTransform::UpdateMatrix() {
-	matWorld_ = Math::MakeAffineMatrix(scale_, rotation_, translation_);
+	// スケール、回転、平行移動を合成して行列を計算
+	matWorld_ = MakeAffineMatrix(scale_, rotation_, translation_);
+	// 行列を定数バッファに転送
 	TransferMatrix();
 }
