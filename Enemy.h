@@ -1,61 +1,87 @@
 ﻿#pragma once
-#include "Reckon.h"
 #include "EnemyBullet.h"
-#include "EnemyState.h"
-#include "MatrixMath.h"
 #include "Model.h"
+#include "Player.h"
 #include "TimedCall.h"
+#include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "MatrixMath.h"
+#include <list>
 
 class Player;
 
-class EnemyState;
+class Enemy;
+
+enum class Phase {
+	Approach,
+	Leave,
+};
+
+class EnemyState {
+
+protected:
+	Enemy* enemy_ = nullptr;
+
+public:
+	virtual void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
+	virtual void Update(){};
+};
+
+class EnemyStateApproah : public EnemyState {
+
+public:
+	void Update();
+};
+
+class EnemyStateLeave : public EnemyState {
+
+public:
+	void Update();
+};
 
 class Enemy {
-public:
-	Enemy();
 
+public:
 	~Enemy();
 
-	void Initialize(Model* model);
+	void Initialize(Model* model, const Vector3& position);
 
 	void Update();
 
-	void Draw(const ViewProjection& viewProjection);
+	void Draw(const ViewProjection& view);
 
-	void Move(Vector3 speed);
+	void ChangeState(EnemyState* newEnemyState);
 
-	void ChangePhase(EnemyState* newState);
+	WorldTransform GetWT() { return worldTransform_; }
 
-	Vector3 GetTranslation() { return worldTransform_.translation_; };
+	void SetPosition(Vector3 speed);
+
+	// 攻撃
+	void Attack();
 
 	void Fire();
-
-	void FireandReset();
 
 	void SetPlayer(Player* player) { player_ = player; }
 
 	Vector3 GetWorldPosition();
 
 private:
-	// メンバ関数ポインタのテーブル
-	static void (Enemy::*phasetable_[])();
-
-private:
 	WorldTransform worldTransform_;
-	Model* model_ = nullptr;
-	uint32_t textureHandle_ = 0u;
+	Model* model_;
+	uint32_t texturehandle_;
+
+	Phase phase_ = Phase::Approach;
 
 	Player* player_ = nullptr;
 
+	EnemyState* state;
+
+	// 弾
 	std::list<EnemyBullet*> bullets_;
 
-	EnemyState* phase_ = nullptr;
+	std::list<TimedCall*> timedCall_;
 
-	std::list<TimedCall*> timedCalls_;
+	static const int kShotInterval = 60;
 
-public:
-	static const int kFireInterval = 60;
-
-	int32_t FireTimer_ = 0;
+	int timer = 0;
 };

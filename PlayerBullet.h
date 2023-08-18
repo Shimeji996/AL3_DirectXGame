@@ -10,21 +10,18 @@ public:
 
 	void Draw(const ViewProjection& viewProjection);
 
+	bool IsDead() const { return isDead_; }
+
 private:
 	WorldTransform worldTransform_;
-
-	Model* model_ = nullptr;
-
-	uint32_t textureHandle_ = 0u;
-
+	Model* model_;
+	uint32_t texturehandle_;
 	Vector3 velocity_;
+	// Vector3 Add(Vector3& a, Vector3& b);
 
-	static const int32_t kLifeTime = 60 * 5;
-
-	int32_t deathTimer_ = kLifeTime;
-
+	static const int32_t kLifeTime = 60;
+	// デスタイマー
+	int32_t deathtimer_ = kLifeTime;
+	// デスフラグ
 	bool isDead_ = false;
-
-public:
-	bool IsDead() const { return isDead_; }
 };
