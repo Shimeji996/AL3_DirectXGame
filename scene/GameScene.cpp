@@ -29,7 +29,7 @@ void GameScene::Initialize() {
 	enemy_->SetPlayer(player_);
 	Vector3 position = {0, 0, 30};
 	// 敵の初期化
-	enemy_->Initialize(model_, position);
+	enemy_->Initialize(model_, position, {0, 0, -0.5});
 
 	debugCamera_ = new DebugCamera(1280, 720);
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -119,67 +119,40 @@ void GameScene::Draw() {
 }
 
 void GameScene::CheckAllCollisions() {
-	// 判定対象AとBの座標
-	Vector3 posA, posB;
-
-	// 自弾リストの取得
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
-	// 敵弾リストの取得
 	const std::list<EnemyBullet*>& enemyBullets = enemy_->GetBullets();
 
-#pragma region 自キャラと敵弾
-	posA = player_->GetWorldPosition();
-
+#pragma region 自キャラと敵弾の当たり判定
 	for (EnemyBullet* bullet : enemyBullets) {
-		posB = bullet->GetWorldPosition();
-
-		float judge = (posB.x - posA.x) * (posB.x - posA.x) +
-		              (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z);
-
-		float playerRad = 2.5f;
-		float enemyRad = 2.5f;
-		if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
-			player_->OnCollision();
-			bullet->OnCollision();
-		}
+		CheckCollisionPair(bullet, player_);
 	}
 #pragma endregion
 
-#pragma region 自弾と敵キャラ
-
-	for (PlayerBullet* playerBullet : playerBullets) {
-		posB = playerBullet->GetWorldPosition();
-		for (EnemyBullet* enemyBullet : enemyBullets) {
-			posA = enemyBullet->GetWorldPosition();
-
-			float judge = (posB.x - posA.x) * (posB.x - posA.x) +
-			              (posB.y - posA.y) * (posB.y - posA.y) +
-			              (posB.z - posA.z) * (posB.z - posA.z);
-
-			float playerRad = 2.5f;
-			float enemyRad = 2.5f;
-			if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
-				playerBullet->OnCollision();
-				enemyBullet->OnCollision();
-			}
-		}
-	}
-#pragma endregion
-
-#pragma region 自弾と敵キャラ
-	posB = enemy_->GetWorldPosition();
+#pragma region 自弾と敵キャラの当たり判定
 	for (PlayerBullet* bullet : playerBullets) {
-		posA = bullet->GetWorldPosition();
+		CheckCollisionPair(bullet, enemy_);
+	}
+#pragma endregion
 
-		float judge = (posB.x - posA.x) * (posB.x - posA.x) +
-		              (posB.y - posA.y) * (posB.y - posA.y) + (posB.z - posA.z) * (posB.z - posA.z);
-
-		float playerRad = 2.5f;
-		float enemyRad = 2.5f;
-		if (judge <= (playerRad + enemyRad) * (playerRad + enemyRad)) {
-			player_->OnCollision();
-			bullet->OnCollision();
+#pragma region 自弾と敵弾の当たり判定
+	for (EnemyBullet* enemyBullet : enemyBullets) {
+		for (PlayerBullet* playerBullet : playerBullets) {
+			CheckCollisionPair(enemyBullet, playerBullet);
 		}
 	}
 #pragma endregion
+}
+
+void GameScene::CheckCollisionPair(Collider* colliderA, Collider* colliderB) {
+	Vector3 posA = colliderA->GetWorldPosition();
+	Vector3 posB = colliderB->GetWorldPosition();
+	float radA = colliderA->GetRadius();
+	float radB = colliderB->GetRadius();
+	Vector3 distance = {
+	    (posB.x - posA.x) * (posB.x - posA.x), (posB.y - posA.y) * (posB.y - posA.y),
+	    (posB.z - posA.z) * (posB.z - posA.z)};
+	if ((radA + radB) * (radA + radB) >= distance.x + distance.y + distance.z) {
+		colliderA->OnCollision();
+		colliderB->OnCollision();
+	}
 }
