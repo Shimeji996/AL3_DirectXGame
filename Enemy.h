@@ -1,87 +1,47 @@
 ﻿#pragma once
 #include "EnemyBullet.h"
 #include "Model.h"
-#include "Player.h"
-#include "TimedCall.h"
-#include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "MatrixMath.h"
-#include <list>
 
 class Player;
-
-class Enemy;
-
-enum class Phase {
-	Approach,
-	Leave,
-};
-
-class EnemyState {
-
-protected:
-	Enemy* enemy_ = nullptr;
-
-public:
-	virtual void SetEnemy(Enemy* enemy) { enemy_ = enemy; }
-	virtual void Update(){};
-};
-
-class EnemyStateApproah : public EnemyState {
-
-public:
-	void Update();
-};
-
-class EnemyStateLeave : public EnemyState {
-
-public:
-	void Update();
-};
-
+/// <summary>
+/// 敵
+/// </summary>
 class Enemy {
-
 public:
-	~Enemy();
+	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 
-	void Initialize(Model* model, const Vector3& position);
+	~Enemy();
 
 	void Update();
 
 	void Draw(const ViewProjection& view);
 
-	void ChangeState(EnemyState* newEnemyState);
-
-	WorldTransform GetWT() { return worldTransform_; }
-
-	void SetPosition(Vector3 speed);
-
-	// 攻撃
-	void Attack();
-
 	void Fire();
 
 	void SetPlayer(Player* player) { player_ = player; }
 
-	Vector3 GetWorldPosition();
+	Vector3 GetworldPosition();
+
+	static const int kFireInterval = 60;
+	int32_t fireTimer;
 
 private:
+	// 行動フェーズ
+	enum class Phase {
+		Approach,
+		Leave,    
+		start,    
+	};
 	WorldTransform worldTransform_;
 	Model* model_;
 	uint32_t texturehandle_;
-
+	// フェーズ
 	Phase phase_ = Phase::Approach;
-
-	Player* player_ = nullptr;
-
-	EnemyState* state;
-
-	// 弾
+	Vector3 velocity_;
+	void Approach();
+	void Leave();
+	static void (Enemy::*EfuncTable[])();
 	std::list<EnemyBullet*> bullets_;
-
-	std::list<TimedCall*> timedCall_;
-
-	static const int kShotInterval = 60;
-
-	int timer = 0;
+	Player* player_ = nullptr;
 };

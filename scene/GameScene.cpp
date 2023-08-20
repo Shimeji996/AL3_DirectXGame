@@ -33,7 +33,7 @@ void GameScene::Initialize() {
 	enemy_->SetPlayer(player_);
 	Vector3 position = {30.0f, 0.0f, 30.0f};
 	// 敵初期化
-	enemy_->Initialize(model_, position);
+	enemy_->Initialize(model_, position, {0, 0, -0.5});
 	// デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 	// 軸方向表示を有効にする

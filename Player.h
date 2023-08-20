@@ -9,29 +9,22 @@
 #include <list>
 
 class Player {
+
 public:
-	/// <summary>
+	///< summary>
 	/// 初期化
-	/// </summary>
+	///</summary>
 	void Initialize(Model* model, uint32_t textureHandle);
 
-	/// <summary>
-	/// 毎フレーム処理
-	/// </summary>
 	void Update();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw(ViewProjection viewProjection);
+	void Draw(ViewProjection viewProjection_);
 
-	// 攻撃
 	void Attack();
 
-	Vector3 GetWorldPosition();
-
-	// デストラクタ
 	~Player();
+
+	Vector3 GetWorldPosition();
 
 private:
 	// ワールド変換データ
@@ -42,12 +35,11 @@ private:
 	uint32_t textureHandle_ = 0u;
 	// キーボード入力
 	Input* input_ = nullptr;
-	// ImGuiで値を入力する
+	// ImGUiで値を入力する変数
 	float inputFloat3[3] = {0, 0, 0};
 	// 弾
 	// PlayerBullet* bullet_ = nullptr;
 	// 弾
 	std::list<PlayerBullet*> bullets_;
-
 	int count = 0;
 };
