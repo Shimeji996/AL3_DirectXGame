@@ -47,9 +47,9 @@ void GameScene::Update() {
 
 #ifdef _DEBUG
 
-	if (input_->TriggerKey(DIK_SPACE) && isDebugCameraActive_ == false) {
+	if (input_->TriggerKey(DIK_RETURN) && isDebugCameraActive_ == false) {
 		isDebugCameraActive_ = true;
-	} else if (input_->TriggerKey(DIK_SPACE) && isDebugCameraActive_ == true) {
+	} else if (input_->TriggerKey(DIK_RETURN) && isDebugCameraActive_ == true) {
 		isDebugCameraActive_ = false;
 	}
 	// カメラの処理
