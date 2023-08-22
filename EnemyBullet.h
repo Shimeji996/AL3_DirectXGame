@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Model.h"
 #include "Collider.h"
+#include "CollisionConfig.h"
 
 class EnemyBullet : public Collider {
 public:
